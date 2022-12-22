@@ -1,0 +1,621 @@
+drop sequence member_seq;
+drop table member;
+ 
+create sequence member_seq
+    start with 1000
+    maxvalue 999999999
+    increment by 1
+    nocache
+    nocycle;
+    
+create table member(
+    idx         number          default member_seq.nextval primary key,
+    usertype    varchar2(10)    not null check(usertype in ('S', 'T', 'A')),
+    userid      varchar2(100)   unique not null,
+    userpw      varchar2(100)   not null,
+    username    varchar2(50)    not null,
+    birthDate   varchar2(50)    not null,
+    gender      varchar2(10)    not null check(gender in ('남', '여')),
+    email       varchar2(100)   ,
+    joinDate    date            default sysdate,
+    phoneNumber varchar2(30)    not null
+);
+
+commit;
+
+drop sequence board_seq;
+drop table board;
+
+create sequence board_seq
+    start with 10000
+    maxvalue 999999999
+    increment by 1
+    nocache
+    nocycle;
+
+create table board(
+    idx             number          default board_seq.nextval primary key,
+    member_idx      number          ,
+    boardType	varchar2(10)    not null,
+    title           varchar2(200)   not null,
+    writeDate       date            default sysdate,
+    views           number          default 0,
+    contents        varchar2(500)   not null,
+    
+    constraint fk_board_member
+    foreign key(member_idx)
+    references member(idx)
+    on delete cascade
+);
+
+commit;
+
+drop sequence timetable_seq;
+drop table timetable;
+
+create sequence timetable_seq
+    start with 1
+    maxvalue 999999999
+    increment by 1
+    nocache
+    nocycle;
+
+create table timetable(
+    idx         number              default timetable_seq.nextval primary key,
+    WEEK	    VARCHAR2(10 BYTE)   not null,
+    TIMEYEAR	VARCHAR2(10 BYTE)   not null,
+    TIMEMONTH	VARCHAR2(10 BYTE)   not null,
+    ROOM	    VARCHAR2(20 BYTE)   not null,
+    LESSONTIME	VARCHAR2(30 BYTE)   not null,
+    LESSON	    VARCHAR2(200 BYTE)   not null,
+    TEACHER	    VARCHAR2(30 BYTE)   not null
+);
+
+commit;
+
+drop sequence enrolment_seq;
+drop table enrolment;
+
+create sequence enrolment_seq
+    start with 100
+    maxvalue 999999999
+    increment by 1
+    nocache
+    nocycle;
+
+create table enrolment(
+    idx         number  default enrolment_seq.nextval primary key,
+    member_idx  number  ,
+    timetable_idx   number  ,
+    
+    constraint fk_enrolment_member
+    foreign key(member_idx)
+    references member(idx)
+    on delete cascade,
+    
+    constraint fk_enrolment_timetable
+    foreign key(timetable_idx)
+    references timetable(idx)
+    on delete cascade
+);
+
+commit;
+
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, phoneNumber)
+    values('A', 'admin1', '1234', '관리자1', '1900-01-01', '남', '010-0001-0001');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, phoneNumber)
+    values('A', 'admin2', '12345', '관리자2', '1900-01-01', '여', '010-0002-0002');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, phoneNumber)
+    values('A', 'admin3', '123456', '관리자3', '1900-01-01', '남', '010-0003-0003');
+    
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('T', 't1', '1234', '강사1', '1900-12-12', '여', '20/01/01', '010-1111-1111');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('T', 't2', '1234', '강사2', '1900-12-12', '남', '21/01/01', '010-1112-1112');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('T', 't3', '1234', '강사3', '1900-12-12', '남', '21/01/01', '010-1113-1113');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('T', 't4', '1234', '강사4', '1900-12-12', '남', '22/01/01', '010-1114-1114');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('T', 't5', '1234', '강사5', '1900-12-12', '여', '22/01/01', '010-1115-1115');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('T', 't6', '1234', '강사6', '1900-12-12', '여', '22/01/01', '010-1116-1116');
+    
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's1', '1234', '학생1', '1900-12-12', '남', '22/01/01', '010-2221-2221');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's2', '1234', '학생2', '1900-12-12', '여', '22/01/03', '010-2222-2222');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's3', '1234', '학생3', '1900-12-12', '여', '22/01/05', '010-2223-2223');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's4', '1234', '학생4', '1900-12-12', '남', '22/01/07', '010-2224-2224');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's5', '1234', '학생5', '1900-12-12', '남', '22/02/08', '010-2225-2225');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's6', '1234', '학생6', '1900-12-12', '남', '22/02/10', '010-2226-2226');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's7', '1234', '학생7', '1900-12-12', '여', '22/02/12', '010-2227-2227');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's8', '1234', '학생8', '1900-12-12', '여', '22/02/14', '010-2228-2228');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's9', '1234', '학생9', '1900-12-12', '남', '22/03/15', '010-2229-2229');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's10', '1234', '학생10', '1900-12-12', '남', '22/03/17', '010-2210-2210');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's11', '1234', '학생11', '1900-12-12', '남', '22/03/19', '010-2211-2211');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's12', '1234', '학생12', '1900-12-12', '남', '22/04/06', '010-2212-2212');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's13', '1234', '학생13', '1900-12-12', '여', '22/04/08', '010-2213-2213');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's14', '1234', '학생14', '1900-12-12', '여', '22/04/09', '010-2214-2214');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's15', '1234', '학생15', '1900-12-12', '여', '22/05/01', '010-2215-2215');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's16', '1234', '학생16', '1900-12-12', '남', '22/05/01', '010-2216-2216');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's17', '1234', '학생17', '1900-12-12', '남', '22/05/01', '010-2217-2217');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's18', '1234', '학생18', '1900-12-12', '남', '22/05/01', '010-2218-2218');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's19', '1234', '학생19', '1900-12-12', '남', '22/06/01', '010-2219-2219');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's20', '1234', '학생20', '1900-12-12', '남', '22/06/01', '010-2220-2220');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's21', '1234', '학생21', '1900-12-12', '남', '22/06/01', '010-2221-2221');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's22', '1234', '학생22', '1900-12-12', '남', '22/06/01', '010-2222-2222');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's23', '1234', '학생23', '1900-12-12', '남', '22/07/01', '010-2223-2223');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's24', '1234', '학생24', '1900-12-12', '남', '22/07/01', '010-2224-2224');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's25', '1234', '학생25', '1900-12-12', '남', '22/07/01', '010-2225-2225');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's26', '1234', '학생26', '1900-12-12', '남', '22/08/01', '010-2226-2226');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's27', '1234', '학생27', '1900-12-12', '여', '22/08/01', '010-2227-2227');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's28', '1234', '학생28', '1900-12-12', '여', '22/08/01', '010-2228-2228');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's29', '1234', '학생29', '1900-12-12', '여', '22/09/01', '010-2229-2229');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's30', '1234', '학생30', '1900-12-12', '여', '22/09/01', '010-2230-2230');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's31', '1234', '학생31', '1900-12-12', '여', '22/09/01', '010-2231-2231');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's32', '1234', '학생32', '1900-12-12', '여', '22/09/01', '010-2232-2232');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's33', '1234', '학생33', '1900-12-12', '남', '22/09/01', '010-2233-2233');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's34', '1234', '학생34', '1900-12-12', '남', '22/09/01', '010-2234-2234');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's35', '1234', '학생35', '1900-12-12', '남', '22/09/01', '010-2235-2235');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's36', '1234', '학생36', '1900-12-12', '남', '22/09/01', '010-2236-2236');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's37', '1234', '학생37', '1900-12-12', '남', '22/09/01', '010-2237-2237');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's38', '1234', '학생38', '1900-12-12', '여', '22/09/01', '010-2238-2238');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's39', '1234', '학생39', '1900-12-12', '여', '22/10/01', '010-2239-2239');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's40', '1234', '학생40', '1900-12-12', '남', '22/10/01', '010-2240-2240');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's41', '1234', '학생41', '1900-12-12', '남', '22/10/01', '010-2241-2241');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's42', '1234', '학생42', '1900-12-12', '남', '22/10/01', '010-2242-2242');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's43', '1234', '학생43', '1900-12-12', '남', '22/10/01', '010-2243-2243');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's44', '1234', '학생44', '1900-12-12', '여', '22/10/01', '010-2244-2244');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's45', '1234', '학생45', '1900-12-12', '여', '22/10/01', '010-2245-2245');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's46', '1234', '학생46', '1900-12-12', '여', '22/10/01', '010-2246-2246');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's47', '1234', '학생47', '1900-12-12', '남', '22/10/01', '010-2247-2247');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's48', '1234', '학생48', '1900-12-12', '남', '22/10/01', '010-2248-2248');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's49', '1234', '학생49', '1900-12-12', '남', '22/10/01', '010-2249-2249');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's50', '1234', '학생50', '1900-12-12', '남', '22/10/01', '010-2250-2250');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's51', '1234', '학생51', '1900-12-12', '남', '22/10/01', '010-2251-2251');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's52', '1234', '학생52', '1900-12-12', '남', '22/10/01', '010-2252-2252');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's53', '1234', '학생53', '1900-12-12', '여', '22/10/01', '010-2253-2253');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's54', '1234', '학생54', '1900-12-12', '여', '22/10/01', '010-2254-2254');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's55', '1234', '학생55', '1900-12-12', '여', '22/10/01', '010-2255-2255');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's56', '1234', '학생56', '1900-12-12', '남', '22/10/01', '010-2256-2256');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's57', '1234', '학생57', '1900-12-12', '남', '22/10/01', '010-2257-2257');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's58', '1234', '학생58', '1900-12-12', '남', '22/11/01', '010-2258-2258');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's59', '1234', '학생59', '1900-12-12', '남', '22/11/01', '010-2259-2259');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's60', '1234', '학생60', '1900-12-12', '남', '22/11/01', '010-2260-2260');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's61', '1234', '학생61', '1900-12-12', '남', '22/11/01', '010-2261-2261');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's62', '1234', '학생62', '1900-12-12', '남', '22/11/01', '010-2262-2262');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's63', '1234', '학생63', '1900-12-12', '남', '22/11/01', '010-2263-2263');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's64', '1234', '학생64', '1900-12-12', '남', '22/11/01', '010-2264-2264');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's65', '1234', '학생65', '1900-12-12', '남', '22/12/01', '010-2265-2265');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's66', '1234', '학생66', '1900-12-12', '남', '22/12/01', '010-2266-2266');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's67', '1234', '학생67', '1900-12-12', '남', '22/12/01', '010-2267-2267');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's68', '1234', '학생68', '1900-12-12', '남', '22/12/01', '010-2268-2268');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's69', '1234', '학생69', '1900-12-12', '남', '22/12/01', '010-2269-2269');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's70', '1234', '학생70', '1900-12-12', '남', '22/12/01', '010-2270-2270');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's71', '1234', '학생71', '1900-12-12', '남', '22/12/01', '010-2271-2271');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's72', '1234', '학생72', '1900-12-12', '남', '22/12/01', '010-2272-2272');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's73', '1234', '학생73', '1900-12-12', '남', '22/12/01', '010-2273-2273');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's74', '1234', '학생74', '1900-12-12', '남', '22/12/01', '010-2274-2274');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's75', '1234', '학생75', '1900-12-12', '남', '22/12/01', '010-2275-2275');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's76', '1234', '학생76', '1900-12-12', '남', '22/12/01', '010-2276-2276');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's77', '1234', '학생77', '1900-12-12', '남', '22/12/01', '010-2277-2277');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's78', '1234', '학생78', '1900-12-12', '남', '22/12/01', '010-2278-2278');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's79', '1234', '학생79', '1900-12-12', '남', '22/12/01', '010-2279-2279');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's80', '1234', '학생80', '1900-12-12', '남', '22/12/01', '010-2280-2280');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's81', '1234', '학생81', '1900-12-12', '남', '22/12/01', '010-2281-2281');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's82', '1234', '학생82', '1900-12-12', '남', '22/12/01', '010-2282-2282');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's83', '1234', '학생83', '1900-12-12', '여', '22/12/01', '010-2283-2283');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's84', '1234', '학생84', '1900-12-12', '여', '22/12/01', '010-2284-2284');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's85', '1234', '학생85', '1900-12-12', '여', '22/12/01', '010-2285-2285');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's86', '1234', '학생86', '1900-12-12', '여', '22/12/01', '010-2286-2286');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's87', '1234', '학생87', '1900-12-12', '남', '22/12/01', '010-2287-2287');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's88', '1234', '학생88', '1900-12-12', '남', '22/12/01', '010-2288-2288');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's89', '1234', '학생89', '1900-12-12', '남', '22/12/01', '010-2289-2289');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's90', '1234', '학생90', '1900-12-12', '남', '22/12/01', '010-2290-2290');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's91', '1234', '학생91', '1900-12-12', '남', '22/12/01', '010-2291-2291');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's92', '1234', '학생92', '1900-12-12', '남', '22/12/01', '010-2292-2292');
+insert into
+    member (usertype, userid, userpw, username, birthDate, gender, joinDate, phoneNumber)
+    values('S', 's93', '1234', '학생93', '1900-12-12', '남', '22/12/01', '010-2293-2293');
+
+commit;
+
+insert into board (member_idx, boardType, title, contents) values (1000, 'N', '테스트1', '테스트 내용입니다'); 
+insert into board (member_idx, boardType, title, contents) values (1000, 'N', '테스트2', '테스트2 내용입니다'); 
+insert into board (member_idx, boardType, title, contents) values (1001, 'N', '테스트3', '테스트3 내용입니다');
+insert into board (member_idx, boardType, title, contents) values (1001, 'N', '테스트4', '테스트4 내용입니다');
+insert into board (member_idx, boardType, title, contents) values (1002, 'N', '테스트5', '테스트5 내용입니다');
+insert into board (member_idx, boardType, title, contents) values (1002, 'N', '테스트6', '테스트6 내용입니다');
+
+insert into board (member_idx, boardType, title, contents) values (1009, 'Q', '테스트1', '테스트1 내용입니다');
+insert into board (member_idx, boardType, title, contents) values (1009, 'Q', '테스트2', '테스트2 내용입니다');
+insert into board (member_idx, boardType, title, contents) values (1010, 'Q', '테스트3', '테스트3 내용입니다');
+insert into board (member_idx, boardType, title, contents) values (1010, 'Q', '테스트4', '테스트4 내용입니다');
+insert into board (member_idx, boardType, title, contents) values (1011, 'Q', '테스트5', '테스트5 내용입니다');
+insert into board (member_idx, boardType, title, contents) values (1011, 'Q', '테스트6', '테스트6 내용입니다');
+
+insert into board (member_idx, boardType, title, contents) values (1000, 'F', '테스트1', '테스트1 내용입니다');
+insert into board (member_idx, boardType, title, contents) values (1000, 'F', '테스트2', '테스트2 내용입니다');
+insert into board (member_idx, boardType, title, contents) values (1001, 'F', '테스트3', '테스트3 내용입니다');
+insert into board (member_idx, boardType, title, contents) values (1001, 'F', '테스트4', '테스트4 내용입니다');
+insert into board (member_idx, boardType, title, contents) values (1002, 'F', '테스트5', '테스트5 내용입니다');
+insert into board (member_idx, boardType, title, contents) values (1002, 'F', '테스트6', '테스트6 내용입니다');
+
+commit;
+
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','1','1002호','9:00~12:00','JAVA기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','1','1004호','15:30~18:30','네트워크','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','10','1002호','12:30~15:30','JAVA기초','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','10','1003호','12:30~15:30','보안','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','12','1002호','9:00~12:00','SPRING기초','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','12','1004호','9:00~12:00','취업반','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','2','1005호','15:30~18:30','JSP기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','3','1003호','15:30~18:30','파이썬단과','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','3','1004호','12:30~15:30','취업반','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','4','1003호','9:00~12:00','보안','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','4','1003호','12:30~15:30','네트워크','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','4','1001호','15:30~18:30','취업반','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','6','1001호','12:30~15:30','C언어기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','7','1003호','15:30~18:30','C언어기초','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','7','1001호','9:00~12:00','보안','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','8','1005호','12:30~15:30','SPRING기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','8','1004호','12:30~15:30','C언어기초','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','8','1003호','15:30~18:30','JAVA기초','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2020','9','1001호','9:00~12:00','취업반','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','10','1003호','15:30~18:30','JSP기초','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','10','1004호','9:00~12:00','네트워크','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','11','1002호','15:30~18:30','파이썬단과','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','12','1002호','12:30~15:30','취업반','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','12','1003호','15:30~18:30','JSP기초','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','2','1002호','12:30~15:30','취업반','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','3','1003호','12:30~15:30','C언어기초','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','4','1002호','9:00~12:00','JAVA기초','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','6','1006호','12:30~15:30','SPRING기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','6','1005호','15:30~18:30','파이썬단과','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','6','1005호','12:30~15:30','네트워크','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','6','1001호','15:30~18:30','C언어기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','6','1003호','15:30~18:30','보안','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','7','1006호','15:30~18:30','JSP기초','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','7','1001호','9:00~12:00','파이썬단과','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','7','1006호','9:00~12:00','JSP기초','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','7','1004호','12:30~15:30','네트워크','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','8','1001호','9:00~12:00','SPRING기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','9','1004호','12:30~15:30','보안','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','9','1006호','9:00~12:00','취업반','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2021','9','1005호','15:30~18:30','JAVA기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','1','1001호','9:00~12:00','네트워크','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','10','1001호','12:30~15:30','JAVA기초','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','10','1001호','15:30~18:30','JAVA기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','10','1002호','12:30~15:30','취업반','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','11','1004호','15:30~18:30','파이썬단과','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','12','1005호','12:30~15:30','SPRING기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','12','1006호','15:30~18:30','JAVA기초','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','2','1006호','9:00~12:00','JAVA기초','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','2','1004호','12:30~15:30','C언어기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','2','1003호','15:30~18:30','파이썬단과','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','3','1003호','15:30~18:30','네트워크','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','3','1005호','12:30~15:30','스프링기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','3','1005호','9:00~12:00','SPRING기초','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','4','1006호','9:00~12:00','파이썬기초','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','4','1004호','15:30~18:30','스프링기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','4','1004호','12:30~15:30','네트워크','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','5','1004호','9:00~12:00','파이썬기초','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','5','1001호','12:30~15:30','네트워크','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','5','1003호','12:30~15:30','파이썬기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','6','1002호','12:30~15:30','파이썬기초','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','6','1003호','15:30~18:30','파이썬기초','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','6','1006호','15:30~18:30','C언어기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','7','1001호','15:30~18:30','파이썬기초','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','7','1005호','15:30~18:30','SPRING기초','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','8','1003호','12:30~15:30','파이썬기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','8','1006호','12:30~15:30','파이썬기초','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','8','1005호','15:30~18:30','파이썬기초','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','8','1004호','15:30~18:30','파이썬기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','8','1001호','9:00~12:00','파이썬기초','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','8','1002호','15:30~18:30','C언어기초','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','9','1004호','9:00~12:00','SPRING기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','9','1006호','9:00~12:00','C언어기초','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','9','1005호','12:30~15:30','보안','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2022','9','1003호','9:00~12:00','JSP기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','1','1002호','9:00~12:00','네트워크','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','10','1001호','9:00~12:00','C언어기초','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','10','1002호','9:00~12:00','C언어기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','10','1004호','12:30~15:30','JSP기초','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','10','1006호','12:30~15:30','JSP기초','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','11','1006호','9:00~12:00','JAVA기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','11','1005호','9:00~12:00','JSP기초','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','12','1005호','15:30~18:30','보안','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','12','1005호','12:30~15:30','C언어기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','12','1006호','9:00~12:00','JSP기초','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','2','1006호','9:00~12:00','JSP기초','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','2','1003호','9:00~12:00','C언어기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','3','1002호','9:00~12:00','SPRING기초','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','4','1002호','15:30~18:30','SPRING기초','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','4','1006호','9:00~12:00','JSP기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','4','1005호','15:30~18:30','SPRING기초','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','6','1003호','12:30~15:30','취업반','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','7','1002호','15:30~18:30','C언어기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('평일','2023','8','1005호','9:00~12:00','보안','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2010','10','1004호','9:00~14:00','C언어기초','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2010','4','1006호','14:30~19:30','C언어기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2019','9','1002호','9:00~14:00','C언어기초','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','10','1005호','9:00~14:00','JSP기초','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','10','1004호','9:00~14:00','JAVA=오프라인','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','11','1001호','9:00~14:00','네트워크','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','11','1004호','9:00~14:00','보안','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','11','1004호','14:30~19:30','JSP기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','11','1002호','9:00~14:00','취업반','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','12','1005호','14:30~19:30','보안','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','12','1002호','9:00~14:00','JSP기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','2','1006호','9:00~14:00','JSP기초','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','3','1005호','9:00~14:00','파이썬단과','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','3','1003호','9:00~14:00','JAVA기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','4','1002호','9:00~14:00','취업반','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','4','1001호','9:00~14:00','SPRING기초','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','5','1003호','14:30~19:30','파이썬단과','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','6','1006호','9:00~14:00','네트워크','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','6','1001호','14:30~19:30','JSP기초','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','6','1002호','9:00~14:00','보안','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','6','1002호','14:30~19:30','보안','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','6','1001호','9:00~14:00','JSP기초','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','7','1002호','9:00~14:00','C언어기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','8','1006호','9:00~14:00','취업반','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','8','1004호','9:00~14:00','취업반','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2020','8','1003호','14:30~19:30','JAVA기초','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','1','1005호','14:30~19:30','JAVA기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','2','1004호','9:00~14:00','취업반','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','2','1004호','9:00~14:00','네트워크','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','3','1002호','9:00~14:00','파이썬단과','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','3','1002호','9:00~14:00','네트워크','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','4','1005호','9:00~14:00','취업반','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','4','1005호','14:30~19:30','SPRING기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','4','1005호','9:00~14:00','SPRING기초','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','4','1005호','14:30~19:30','파이썬단과','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','4','1002호','9:00~14:00','네트워크','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','5','1003호','9:00~14:00','취업반','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','5','1001호','14:30~19:30','네트워크 기초=오프라인','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','6','1005호','9:00~14:00','JSP기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','8','1003호','9:00~14:00','JAVA기초','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','8','1001호','9:00~14:00','네트워크','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','9','1006호','9:00~14:00','보안','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2021','9','1004호','14:30~19:30','네트워크','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','1','1005호','9:00~14:00','C언어기초','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','1','1006호','14:30~19:30','JAVA기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','1','1006호','14:30~19:30','C언어기초','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','1','1001호','14:30~19:30','취업반','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','1','1005호','14:30~19:30','SPRING기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','1','1006호','9:00~14:00','네트워크 기초=오프라인','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','1','1002호','14:30~19:30','파이썬단과','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','10','1001호','14:30~19:30','C언어기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','10','1002호','14:30~19:30','네트워크','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','10','1004호','9:00~14:00','JSP기초','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','11','1002호','9:00~14:00','네트워크','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','12','1001호','14:30~19:30','C언어기초','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','12','1003호','9:00~14:00','C언어기초','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','12','1005호','14:30~19:30','JAVA기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','2','1005호','14:30~19:30','네트워크 기초=오프라인','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','2','1005호','9:00~14:00','web Basic=비대면','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','3','1004호','9:00~14:00','스프링기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','3','1004호','14:30~19:30','취업반','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','4','1001호','14:30~19:30','C언어기초','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','4','1006호','9:00~14:00','보안','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','5','1002호','9:00~14:00','SPRING기초','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','5','1006호','9:00~14:00','보안','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','7','1003호','9:00~14:00','네트워크','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','8','1003호','14:30~19:30','JSP기초','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2022','8','1003호','9:00~14:00','취업반','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','1','1004호','14:30~19:30','JSP기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','10','1005호','9:00~14:00','JSP기초','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','10','1005호','9:00~14:00','SPRING기초','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','10','1001호','14:30~19:30','보안','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','11','1002호','9:00~14:00','보안','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','12','1002호','9:00~14:00','SPRING기초','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','12','1001호','14:30~19:30','JSP기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','12','1005호','14:30~19:30','보안','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','2','1001호','9:00~14:00','C언어기초','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','3','1005호','9:00~14:00','네트워크','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','3','1003호','9:00~14:00','파이썬단과','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','3','1005호','14:30~19:30','보안','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','5','1006호','14:30~19:30','C언어기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','5','1001호','14:30~19:30','C언어기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','5','1003호','9:00~14:00','JSP기초','강사2');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','5','1002호','14:30~19:30','파이썬단과','강사3');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','5','1003호','9:00~14:00','C언어기초','강사4');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','6','1004호','14:30~19:30','SPRING기초','강사5');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','8','1004호','14:30~19:30','JSP기초','강사6');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','9','1005호','14:30~19:30','JAVA기초','강사1');
+Insert into C##ITBANK.TIMETABLE (WEEK,TIMEYEAR,TIMEMONTH,ROOM,LESSONTIME,LESSON,TEACHER) values ('주말','2023','9','1005호','14:30~19:30','취업반','강사2');
+
+commit;
